@@ -1,0 +1,114 @@
+Elastic
+--------
+
+Disable gatekeeper
+xattr -d -r com.apple.quarantine /Users/aryak/Desktop/Linux/elasticsearch-8.13.2
+
+es : /usr/share/elasticsearch/bin
+my fs : /Users/aryak/Desktop/elasticsearch
+
+
+Every node in elasticsearch is a member of a cluster by default.
+A document is a record in JSON format, document can be compared to a tuple in RDBMS
+An index is a collection of related documents. Index can be compared to table in RDBMS. In elasticsearch, we always query on indices. 
+
+In REST APIs, we use the API along with commands
+APIs always begin with _ [eg: /_cluster], followed by command [eg :/health].
+http://localhost:9200/_cluster/health
+
+
+CURL
+====
+
+curl --cacert config/certs/http_ca.crt -u elastic:+mqJn+EXfC5hdcqZkB8z -X GET https://localhost:9200/_cluster/health
+
+
+GET /_cat/nodes?v
+GET /_cat/shards?v
+GET /_cat/indices?v
+PUT /products
+
+Shards
+-------
+An index, when created have no of shards= 1 by default.
+Shards an be spread across multiple nodes. Max limit of a shard is 2 billion documents.
+Once can index is created, the no of shards is final, cannot be altered.
+ES provides:
+Split API : for altering number of shards of an index, which under the hood creates a new index with
+more shards and ES itself does the heavy lifting of migrating the documents to the new index.
+Shrink API : for reducing the number of shards on an index
+
+Replica shards are never stored on same node
+Default no of replica per shard is 1.
+Queries
+
+To view shards : GET /_cat/shards?v
+To create index : PUT /products
+
+
+
+Adding a document
+
+Request
+
+POST /products/_doc
+{
+  "name": "Iphone 15 plus",
+  "price": 999,
+  "in_stock": 20
+}
+
+Response
+
+{
+  "_index": "products",
+  "_id": "e5uNI48BTI3iOvwGtjL1",
+  "_version": 1,
+  "result": "created",
+  "_shards": {
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  },
+  "_seq_no": 0,
+  "_primary_term": 1
+}
+
+
+Adding a document with ID=1000
+
+Request
+
+PUT /products/_doc/1000
+{
+  "name": "Iphone 15 pro",
+  "price": 899,
+  "in_stock": 10
+}
+
+
+Response
+
+{
+  "_index": "products",
+  "_id": "1000",
+  "_version": 1,
+  "result": "created",
+  "_shards": {
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  },
+  "_seq_no": 1,
+  "_primary_term": 1
+}
+
+
+Updating a document
+====================
+Documents in elasticsearch are immutable. ES simply simply copies the data to a new doc, with same id which gives a feeling of update.
+
+
+
+
+
