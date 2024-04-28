@@ -144,6 +144,55 @@ PUT /products/_doc/1000
 }
 ```
 
-# Updating a document
+## Updating a document
 
-Documents in elasticsearch are immutable. ES simply simply copies the data to a new doc, with same id which gives a feeling of update.
+- Documents in elasticsearch are immutable.
+- ES simply simply copies the data to a new doc, with same id which gives a feeling of update.
+
+#### Adding a field to / updating the document with ID = 1000
+
+```bash
+POST /products/_update/1000
+{
+  "doc": {
+    "in_stock": 19
+  }
+}
+```
+
+#### Decrement the in_stock field by 1
+
+```bash
+POST /products/_update/1000
+{
+  "script": {
+    "source": "ctx._source.in_stock--"
+  }
+}
+```
+
+#### Increment the in_stock field by 10
+
+```bash
+POST /products/_update/1000
+{
+  "script": {
+    "source": "ctx._source.in_stock+=10"
+  }
+}
+```
+
+#### Increment the in_stock by a value passed as parameter
+
+```bash
+POST /products/_update/1000
+POST /products/_update/1000
+{
+  "script": {
+    "source": "ctx._source.in_stock+=params.quantity",
+    "params": {
+      "quantity": 3
+    }
+  }
+}
+```
